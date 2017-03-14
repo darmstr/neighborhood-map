@@ -1,0 +1,67 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>Neighborhodd Map</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            @media all and (min-width: 1px) {
+                #flexBody {
+                /* On small screens, we are no longer using row direction but column */
+                flex-direction: column;
+                }
+            }  
+            @media all and (min-width: 500px) {
+                #flexBody {
+                /* On small screens, we are no longer using row direction but column */
+                flex-direction: row;
+                }
+            }             
+            #header {
+                height:50px;
+                background-color: bisque;
+            }
+            #leftMenu {
+                flex-grow: 1;
+                min-height:100px;
+                background-color: grey;
+
+            }
+            #mapMenu {
+                flex-grow: 3;
+                min-height:150px;
+                background-color: blue;
+                overflow:auto;
+                
+            }
+            #flexBody {
+                display: flex;
+            }
+            #filter {
+                width:220px;
+                margin-left:auto;
+                margin-right:auto;
+                height:100px;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <header id="header"></header>
+        <div id="flexBody">            
+            <div id="leftMenu">
+                <div id="filter">
+                    <input></input><button>Filter</button>
+                </div>
+            </div>
+            <div id="mapMenu"></div>
+        </div>
+    
+    </body>
+
+
+
+
+
+
+
+</html>
