@@ -21,17 +21,45 @@
     <body>        
         <div id="mapMenu"></div>
         <script>
-          function initMap() {
-            var uluru = {lat: -25.363, lng: 131.044};
-            var map = new google.maps.Map(document.getElementById('mapMenu'), {
-              zoom: 4,
-              center: uluru
-            });
-            var marker = new google.maps.Marker({
-              position: uluru,
-              map: map
-            });
-          }
+            
+            startingMarkers = {
+                one : {
+                lat: 34.0832494,
+                lng: -118.2925366
+            },
+                two : {
+                lat: 34.1341154,
+                lng: -118.3915901
+            },
+                three : {
+                lat: 34.0732058,
+                lng: -118.3827328
+            },
+                four : {
+                lat: 34.0963114,
+                lng: -118.406353
+            },
+                five : {
+                lat: 34.0814483,
+                lng: -118.3656898
+            }
+            };
+        
+            function initMap() {
+                var uluru = {lat: 34.0687783, lng: -118.3018407};
+                var map = new google.maps.Map(document.getElementById('mapMenu'), {
+                  zoom: 12,
+                  center: uluru
+                });
+                
+                for (var x in startingMarkers) {                
+                    var marker = new google.maps.Marker({
+                      position: startingMarkers[x],
+                      map: map
+                    });
+                    console.log(x);
+                };
+            }
         </script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEo4gK10dI2C8hxAk6GSvJ6Lr4ss6Kimg&callback=initMap">
