@@ -44,7 +44,6 @@
             }
             
             #sidebar {
-                background: black;
                 width: 200px;
                 -ms-flex: 0 200px;
                 -webkit-box-flex:  0;
@@ -57,34 +56,14 @@
     </head>
     <body>
         <div class="container">
-            <div id="sidebar"></div>
+            <div id="sidebar">
+                <ul data-bind="template: {name: 'sidebar-template', foreach: myViewModel.startingMarkers}">
+                </ul>
+            
+            </div>
             <div id="map"></div>
         </div>
         <script>
-            
-            startingMarkers = {
-                one : {
-                lat: 34.0832494,
-                lng: -118.2925366
-            },
-                two : {
-                lat: 34.1341154,
-                lng: -118.3915901
-            },
-                three : {
-                lat: 34.0732058,
-                lng: -118.3827328
-            },
-                four : {
-                lat: 34.0963114,
-                lng: -118.406353
-            },
-                five : {
-                lat: 34.0582249,
-                lng: -118.4274291
-            }
-            };
-        
             function initMap() {
                 var uluru = {lat: 34.0824162, lng: -118.3758685};
                 var map = new google.maps.Map(document.getElementById('map'), {
@@ -92,23 +71,55 @@
                   center: uluru
                 });
                 
-                for (var x in startingMarkers) {                
+                for (var x in myViewModel.startingMarkers) {                
                     var marker = new google.maps.Marker({
-                      position: startingMarkers[x],
-                      map: map
+                        position: {
+                            lat: myViewModel.startingMarkers[x].lat,
+                            lng: myViewModel.startingMarkers[x].lng
+                            },
+                        map: map
                     });
-                }; 
+                };
             } 
         </script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEo4gK10dI2C8hxAk6GSvJ6Lr4ss6Kimg&callback=initMap">
         </script>
+        
+        <script type="text/html" id="sidebar-template">
+            <li data-bind="text: name"></li>
+        </script>
+        
         <script>
         var myViewModel = {
-                name: ko.observable("Dante"),
-                textClear: function(){
-                    myViewModel.name("blank");
-                }
+                startingMarkers: [
+                    {
+                    name: "Marker 1",
+                    lat: 34.0832494,
+                    lng: -118.2925366
+                    },
+                    {
+                    name: "Marker 2",
+                    lat: 34.1341154,
+                    lng: -118.3915901
+                    },
+                    {
+                    name: "Marker 3",
+                    lat: 34.0732058,
+                    lng: -118.3827328
+                    },
+                    {
+                    name: "Marker 4",
+                    lat: 34.0963114,
+                    lng: -118.406353
+                    },
+                    {
+                    name: "Marker 5",
+                    lat: 34.0582249,
+                    lng: -118.4274291
+                    }
+                ]
+    
         }
         ko.applyBindings(myViewModel);
         </script>
