@@ -1,0 +1,36 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>Neighborhodd Map</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            
+            html {
+                height: 100%;
+            }
+            body {            
+                height: 95%;
+            }
+            
+            #mapMenu {
+                height: 100%;
+                width: 100%;
+            }            
+        </style>
+        <script type='text/javascript' src='knockout-3.4.2.js'></script>
+    </head>
+    <body>
+        <h1><span data-bind="text: name"></span></h1>
+        <input data-bind="value: name"></input>
+        <button data-bind="click: textClear">Click me</button>
+        <script>
+            var myViewModel = {
+                name: ko.observable("Dante"),
+                textClear: function(){
+                    myViewModel.name("blank");
+                }
+        }
+        ko.applyBindings(myViewModel);
+        </script>
+    </body>
+</html>

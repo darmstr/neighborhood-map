@@ -8,18 +8,58 @@
             html {
                 height: 100%;
             }
-            body {            
-                height: 95%;
+            body {
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .container {            
+  height: 100%;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-box;
+  display: box;
+  
+  -ms-flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  -ms-box-orient: horizontal;
+  box-orient: horizontal;
+
+            }
+            header {
+                height:100px;
+                background: black;
+                margin: 0;
+                z-index: 999;
             }
             
-            #mapMenu {
-                height: 100%;
-                width: 100%;
-            }            
+            #map {
+ -ms-flex: 1;
+ -webkit-box-flex: 1;
+ -moz-box-flex: 1;
+ -ms-box-flex: 1;
+ box-flex: 1; 
+            }
+            
+            #sidebar {
+  background: black;
+  width: 200px;
+-ms-flex: 0 200px;
+-webkit-box-flex:  0;
+-moz-box-flex:  0;
+-ms-box-flex:  0;
+box-flex:  0;  
+            }
         </style>
+        <script type='text/javascript' src='knockout-3.4.2.js'></script>
     </head>
-    <body>        
-        <div id="mapMenu"></div>
+    <body>
+        <div class="container">
+            <div id="sidebar"></div>
+            <div id="map"></div>
+        </div>
         <script>
             
             startingMarkers = {
@@ -47,7 +87,7 @@
         
             function initMap() {
                 var uluru = {lat: 34.0824162, lng: -118.3758685};
-                var map = new google.maps.Map(document.getElementById('mapMenu'), {
+                var map = new google.maps.Map(document.getElementById('map'), {
                   zoom: 12,
                   center: uluru
                 });
@@ -57,11 +97,20 @@
                       position: startingMarkers[x],
                       map: map
                     });
-                };
-            }
+                }; 
+            } 
         </script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEo4gK10dI2C8hxAk6GSvJ6Lr4ss6Kimg&callback=initMap">
-        </script>   
+        </script>
+        <script>
+        var myViewModel = {
+                name: ko.observable("Dante"),
+                textClear: function(){
+                    myViewModel.name("blank");
+                }
+        }
+        ko.applyBindings(myViewModel);
+        </script>
     </body>
 </html>
