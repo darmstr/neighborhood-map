@@ -1,34 +1,133 @@
 <!doctype HTML>
 <html>
     <head>
-        <title>Neighborhodd Map</title>
+        <title>Tester</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             
             html {
                 height: 100%;
             }
-            body {            
-                height: 95%;
+            body {
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .container {            
+                height: 100%;
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: -moz-box;
+                display: -ms-box;
+                display: box;
+
+                -ms-flex-direction: row;
+                -webkit-box-orient: horizontal;
+                -moz-box-orient: horizontal;
+                -ms-box-orient: horizontal;
+                box-orient: horizontal;
+
+            }
+            header {
+                height:100px;
+                background: black;
+                margin: 0;
+                z-index: 999;
             }
             
-            #mapMenu {
-                height: 100%;
-                width: 100%;
-            }            
+            #map {
+                -ms-flex: 1;
+                -webkit-box-flex: 1;
+                -moz-box-flex: 1;
+                -ms-box-flex: 1;
+                 box-flex: 1; 
+            }
+            
+            #sidebar {
+                width: 200px;
+                -ms-flex: 0 200px;
+                -webkit-box-flex:  0;
+                -moz-box-flex:  0;
+                -ms-box-flex:  0;
+                box-flex:  0;  
+            }
         </style>
         <script type='text/javascript' src='knockout-3.4.2.js'></script>
     </head>
     <body>
-        <h1><span data-bind="text: name"></span></h1>
-        <input data-bind="value: name"></input>
-        <button data-bind="click: textClear">Click me</button>
+        <div class="container">
+            <div id="sidebar">
+                <table data-bind="template: {name: 'sidebar-template', foreach: myViewModel.startingMarkers}">
+                </table>
+            
+            </div>
+            <div id="map"></div>
+        </div>
         <script>
-            var myViewModel = {
-                name: ko.observable("Dante"),
-                textClear: function(){
-                    myViewModel.name("blank");
-                }
+            function initMap() {
+                var uluru = "3183 Wilshire Blvd, Los Angeles, CA 90010";
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 15,
+                  center: {lat: 34.0621759, lng: -118.2907225}
+                });
+                
+            for (var x in myViewModel.startingMarkers) {                
+                var geocoder = new google.maps.Geocoder();
+                geocodeAddress(geocoder, map, myViewModel.startingMarkers[x].address);
+            };
+                
+            function geocodeAddress(geocoder, map, markerAddress) {
+            var address = markerAddress;
+            geocoder.geocode({'address': address}, function(results, status) {
+              if (status === 'OK') {
+                var marker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location
+                });
+              } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+              }
+            });
+          }
+            }
+        </script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEo4gK10dI2C8hxAk6GSvJ6Lr4ss6Kimg&callback=initMap">
+        </script>
+        
+        <script type="text/html" id="sidebar-template">            
+            <tr>
+                <td data-bind="text: name"></td>
+                <td><button>Remove</button></td>
+            </tr>
+        </script>
+        
+        <script>
+        var myViewModel = {
+                startingMarkers: [
+                    {
+                    name: "MacArthur Park",
+                    address: "2230 W 6th St, Los Angeles, CA 90057"
+                    },
+                    {
+                    name: "Lafayette Park",
+                    address: "625 S La Fayette Park Pl, Los Angeles, CA 90057"
+                    },
+                    {
+                    name: "Seoul International Park",
+                    address: "3250 San Marino St, Los Angeles, CA 90006"
+                    },
+                    {
+                    name: "Shatto Recreation Center",
+                    address: "3191 W 4th St, Los Angeles, CA 90020"
+                    },
+                    {
+                    name: "Liberty Park",
+                    address: "3700 Wilshire Blvd, Los Angeles, CA 90010"
+                    }
+                    
+                ]
+    
         }
         ko.applyBindings(myViewModel);
         </script>

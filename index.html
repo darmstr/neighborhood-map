@@ -67,20 +67,29 @@
             function initMap() {
                 var uluru = {lat: 34.0824162, lng: -118.3758685};
                 var map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 12,
-                  center: uluru
+                  zoom: 15,
+                  center: {lat: 34.0621759, lng: -118.2907225}
                 });
                 
                 for (var x in myViewModel.startingMarkers) {                
+                var geocoder = new google.maps.Geocoder();
+                geocodeAddress(geocoder, map, myViewModel.startingMarkers[x].address);
+                    };
+                
+                function geocodeAddress(geocoder, map, markerAddress) {
+                var address = markerAddress;
+                geocoder.geocode({'address': address}, function(results, status) {
+                  if (status === 'OK') {
                     var marker = new google.maps.Marker({
-                        name: myViewModel.startingMarkers[x].name,
-                        position: {
-                            lat: myViewModel.startingMarkers[x].lat,
-                            lng: myViewModel.startingMarkers[x].lng
-                            },
-                        map: map
+                      map: map,
+                      position: results[0].geometry.location
                     });
-                };
+                  } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                  }
+                });
+              }
+
             } 
         </script>
         <script async defer
@@ -98,29 +107,24 @@
         var myViewModel = {
                 startingMarkers: [
                     {
-                    name: "Marker 1",
-                    lat: 34.0832494,
-                    lng: -118.2925366
+                    name: "MacArthur Park",
+                    address: "2230 W 6th St, Los Angeles, CA 90057"
                     },
                     {
-                    name: "Marker 2",
-                    lat: 34.1341154,
-                    lng: -118.3915901
+                    name: "Lafayette Park",
+                    address: "625 S La Fayette Park Pl, Los Angeles, CA 90057"
                     },
                     {
-                    name: "Marker 3",
-                    lat: 34.0732058,
-                    lng: -118.3827328
+                    name: "Seoul International Park",
+                    address: "3250 San Marino St, Los Angeles, CA 90006"
                     },
                     {
-                    name: "Marker 4",
-                    lat: 34.0963114,
-                    lng: -118.406353
+                    name: "Shatto Recreation Center",
+                    address: "3191 W 4th St, Los Angeles, CA 90020"
                     },
                     {
-                    name: "Marker 5",
-                    lat: 34.0582249,
-                    lng: -118.4274291
+                    name: "Liberty Park",
+                    address: "3700 Wilshire Blvd, Los Angeles, CA 90010"
                     }
                 ]
     
