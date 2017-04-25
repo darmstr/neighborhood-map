@@ -64,6 +64,7 @@
             <div id="map"></div>
         </div>
         <script>
+            var map;
             function initMap() {
                 var uluru = {lat: 34.0824162, lng: -118.3758685};
                 var map = new google.maps.Map(document.getElementById('map'), {
@@ -88,8 +89,14 @@
                     alert('Geocode was not successful for the following reason: ' + status);
                   }
                 });
+              } 
+                
+              function clearMarkers() {
+                setMapOnAll(null);
               }
             } 
+            
+            document.getElementById('button').addEventListener('click', clearMarkers, false);
         </script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEo4gK10dI2C8hxAk6GSvJ6Lr4ss6Kimg&callback=initMap">
@@ -98,10 +105,10 @@
         <script type="text/html" id="sidebar-template">            
             <tr>
                 <td data-bind="text: name"></td>
-                <td><button>Remove</button></td>
+                <td><button id="button">Remove</button></td>
             </tr>
         </script>
-        
+
         <script>
         var myViewModel = {
                 startingMarkers: [
