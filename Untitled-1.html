@@ -1,0 +1,187 @@
+<script>
+// a variable for map starting center position
+var centerLocation = {lat: 40.773670, lng: -73.972990};
+var map;
+// initial location information
+var locations = [
+    {
+        lat: 40.730770, 
+		lng: -73.997500,
+        name: "Washington Square Park",
+        foursquareID: "40abf500f964a52035f31ee3"
+    },
+    {
+        lat: 40.712761,
+		lng: -74.006039,
+        name: "New York City Hall",
+        foursquareID: "4a676321f964a52051c91fe3"
+    },
+    {
+        lat: 40.753172,
+		lng: -73.982290,
+        name: "New York Public Library",
+        foursquareID: "452d6886f964a5204a3b1fe3"
+    },
+    {
+        lat: 40.782895,
+		lng: -73.965404,
+        name: "Central Park",
+        foursquareID: "412d2800f964a520df0c1fe3"
+    },
+    {
+        lat: 40.807535,
+		lng: -73.962511,
+        name: "Columbia University",
+        foursquareID: "4227a500f964a520c51f1fe3"
+    },
+    {
+        lat: 40.829693,
+		lng: -73.926435,
+        name: "Yankee Stadium",
+        foursquareID: "3fd66200f964a520ddf01ee3"
+    },
+    {
+        lat: 40.781257,
+		lng: -73.974023,
+        name: "American Museum of Natural History",
+        foursquareID: "4297b480f964a52062241fe3"
+    },
+    {
+        lat: 40.764473,
+		lng: -73.999616,
+        name: "Intrepid Sea, Air & Space Museum",
+        foursquareID: "49f5135cf964a5208e6b1fe3"
+    },
+    {
+        lat: 40.748815,
+		lng: -73.968026,
+        name: "United Nations Headquarters",
+        foursquareID: "4398343ff964a520aa2b1fe3"
+    },
+    {
+        lat: 40.759074,
+		lng: -73.985099,
+        name: "Times Square",
+        foursquareID: "49b7ed6df964a52030531fe3"
+    },
+    {
+        lat: 40.748439,
+		lng: -73.985694,
+        name: "Empire State Building",
+        foursquareID: "43695300f964a5208c291fe3"
+    },
+    {
+        lat: 40.752720,
+		lng: -73.977261,
+        name: "Grand Central Terminal",
+        foursquareID: "42829c80f964a5206a221fe3"
+    },
+];
+
+// grabbing from HTML file, stores handlebar template
+var source = $("#info-template").html();
+// handlebar.js usage. compiles handlebar template so we can insert objects later
+var template = Handlebars.compile(source);
+// this is created as a loading screen for the infowindows. needed a way to reset the windows.
+// usage is explained below.
+var infowindowDefault = '<div style="width: 100px; height: 30px;"><p style="text-align: center;">Loading</p></div>';
+
+// setting up viewmodel
+var ViewModel = function() {
+    // assign self to this perimeter so we can easily point objects to viewmodel
+    var self = this;
+    // knockout observable variable for the input given by a user
+    self.locationInput = ko.observable("");
+    // knockout observable array to store location list items
+    self.locationList = ko.observableArray([]);
+    // we initialize Loc objects and story them in the ko observable array
+    locations.forEach(function(item){
+        self.locationList.push( new Loc(item) );
+    });
+    self.locationList().forEach(function(location){
+        // add event listener for 'click' to each location.marker then we pass location to the return function, then run it right after with location as parameter
+        google.maps.event.addListener(location.marker, 'click', (function(){
+            return function(){
+                self.infoWindowMessage(location);
+            }
+        })(location));
+        // add event listener for 'closeclick' to each infowindow then we pass location to the return function, then run it right after with location as parameter
+        google.maps.event.addListener(self.infowindow, 'closeclick', (function(){
+            return function(){
+                // reset all other markers to default red
+                for (var j = 0; j < locations.length; j++) {
+                    self.locationList()[j].marker.setIcon("https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png");
+                }
+            }
+        })(location))
+    });
+
+    // create a computed list out of locationList ko array and locationInput ko
+    self.computedList = ko.computed(function(){
+        // array to store the result
+        var tempFilteredList = [];
+        var listLength = self.locationList().length;
+        
+        // iterate through the the locationList's name value and turn it into lowercase
+        // then find the index of the the input value that is turned into lowercase
+        // then using the found index, we add the specific element from locationList to tempFilteredList
+        for (var i = 0; i < listLength; i++){
+            if (self.locationList()[i].name().toLowerCase().indexOf(self.locationInput().toLowerCase()) != -1) {
+                    tempFilteredList.push(self.locationList()[i]);
+                    self.locationList()[i].showMarker(map);
+            } else {
+                // for the items that are not a match, we turn off the markers
+                self.locationList()[i].showMarker(null);
+            }
+        }
+        // we order the list in alphabetical order before returning
+        return tempFilteredList.sort(function(l, r){ return l.name() > r.name() ? 1 : -1;});
+    });
+}
+
+// Loc object that would hold all information for each location 
+var Loc = function(data) {
+    // assign self to this perimeter so we can easily point objects to viewmodel
+    var self = this;
+    // store location's name data as ko observables
+    self.name = ko.observable(data.name);
+    // latitude and longitude to set the marker location
+    self.latLng = { lat: data.lat, lng: data.lng };
+    // store location's foursquareID data as ko observables
+    self.foursquareID = ko.observable(data.foursquareID);
+    // image for the marker
+    var image = {
+        url: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
+    };
+    // new marker object
+    self.marker = new google.maps.Marker({
+        position: self.latLng,
+        map: null,
+        icon: image,
+    })
+    // function to display or hide marker
+    self.showMarker = function(mapOrNull) {
+         if (mapOrNull === map) {
+            if (self.marker.map === null) {
+                self.marker.setMap(mapOrNull);
+            }
+        } else {
+            self.marker.setMap(null);
+        }
+    };
+}
+
+// initialize google map
+function initMap() {
+    var myLatLng = centerLocation;
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 13,
+        center: myLatLng,
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+
+    ko.applyBindings(new ViewModel());
+}
+    
+    </script>
