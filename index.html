@@ -76,27 +76,24 @@
             var map;
 
 
-            function createMarker(name,address) {                
-                    var geocoder = new google.maps.Geocoder();
+            function createMarker(name,address,map) {                   
+                /* var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
                     var address = markerAddress;
                     geocoder.geocode({'address': address}, function(results, status) {
-                        if (status === 'OK') {
-                        var marker = new google.maps.Marker({
-                          map: map,
-                          position: results[0].geometry.location,
+                        if (status === 'OK') { */
+                this.marker = new google.maps.Marker({
+                    name: "test marker",      
+                    map: map,
+                          position: {lat: 34.0621759, lng: -118.2907225},
                         });
-                        console.log(marker.position.lng());
-                        return marker;
-                      } else {
-                          return {
-                            name: "error"
-                      };
+                     /* } else {
+                        console.log("error")
                     }
                     });
                   
-                }
+                } */
             }
 
             function setMapOnAll(map) {
@@ -119,26 +116,24 @@
                 setMapOnAll(map);
               }
                
-        var myViewModel = function() {
+        var myViewModel = function(map) {
             this.markers = ko.observableArray([]);
             console.log(this.markers().length);
-            this.markers.push(new createMarker("MacArthur Park","2230 W 6th St, Los Angeles, CA 90057"));
-            this.marker = new google.maps.Marker({
-                          map: map,
-                          position: {lat: 34.0621759, lng: -118.2907225},
-                        });
-            console.log(this.markers);
-            this.marker.setMap(map);
-            
- 
+            this.markers.push(new createMarker("Boiling Crab","3377 Wilshire Blvd #115, Los Angeles, CA 90010",map)); 
+            console.log(this.markers().length);
+            console.log(this.markers()[0].marker.name);
+            console.log(this.markers()[0].marker.position.lng());
+            console.log(this.markers()[0].marker.position.lat());
+            console.log(this.markers()[0].marker.map);
         }
+
            function initMap() {
                 var map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 15,
+                  zoom: 13,
                   center: {lat: 34.0621759, lng: -118.2907225}
                 });
         
-        ko.applyBindings(new myViewModel());
+        ko.applyBindings(new myViewModel(map));
             }
     
 
