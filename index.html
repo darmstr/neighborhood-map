@@ -97,17 +97,18 @@
                     }]; 
 
             function createMarker(name,address,map) {                   
-                var self = myViewModel; 
+                var newMarker = this;
+                console.log(name);
                 var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
                     var address = markerAddress;
                     geocoder.geocode({'address': address}, function(results, status) {
                         if (status === 'OK') { 
-                self.marker = new google.maps.Marker({
-                        name: name,      
-                        map: map,
-                        position: results[0].geometry.location,
+                            newMarker.marker = new google.maps.Marker({
+                                name: name,      
+                                map: map,
+                                position: results[0].geometry.location,
                         });
                       } else {
                         console.log("error")
@@ -115,6 +116,8 @@
                     });
                   
                 } 
+                
+              
             }
 
             function setMapOnAll(map) {
@@ -138,25 +141,22 @@
               }
                
         var myViewModel = function(map) {
-            var self = this
+            viewModel = this
             this.markers = ko.observableArray([]);
-            console.log(this.markers().length);
-            console.log(startingMarkers);
-            
             startingMarkers.forEach(function(x) {
-               self.markers.push(new createMarker(x.name,x.address,map));
+               viewModel.markers.push(new createMarker(x.name,x.address,map));
+                console.log(viewModel.markers().length);
+                
             });
-            
-            //for (var x in startingMarkers) {
-            //self.markers.push(new createMarker(startingMarkers[x]["name"],startingMarkers[x]["address"],map)); 
-            //};
-            console.log(this.markers.length);
+            viewModel.markers().forEach(function(x){
+                console.log(x);
+            });
         }
 
         function initMap() {
                 var map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 13,
-                  center: {lat: 34.0621759, lng: -118.2907225}
+                  zoom: 14,
+                  center: {lat: 34.0624049, lng: -118.2908202}
                 });
         
         ko.applyBindings(new myViewModel(map));
