@@ -74,26 +74,47 @@
 
         <script>
             var map;
-
+            var startingMarkers = [
+                    {
+                    name: "MacArthur Park",
+                    address: "2230 W 6th St, Los Angeles, CA 90057",
+                    },
+                    {
+                    name: "Lafayette Park",
+                    address: "625 S La Fayette Park Pl, Los Angeles, CA 90057",
+                    },
+                    {
+                    name: "Seoul International Park",
+                    address: "3250 San Marino St, Los Angeles, CA 90006",
+                    },
+                    {
+                    name: "Shatto Recreation Center",
+                    address: "3191 W 4th St, Los Angeles, CA 90020",
+                    },
+                    {
+                    name: "Liberty Park",
+                    address: "3700 Wilshire Blvd, Los Angeles, CA 90010",
+                    }]; 
 
             function createMarker(name,address,map) {                   
-                /* var geocoder = new google.maps.Geocoder();
+                var self = myViewModel; 
+                var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
                     var address = markerAddress;
                     geocoder.geocode({'address': address}, function(results, status) {
-                        if (status === 'OK') { */
-                this.marker = new google.maps.Marker({
-                    name: "test marker",      
-                    map: map,
-                          position: {lat: 34.0621759, lng: -118.2907225},
+                        if (status === 'OK') { 
+                self.marker = new google.maps.Marker({
+                        name: name,      
+                        map: map,
+                        position: results[0].geometry.location,
                         });
-                     /* } else {
+                      } else {
                         console.log("error")
                     }
                     });
                   
-                } */
+                } 
             }
 
             function setMapOnAll(map) {
@@ -117,17 +138,22 @@
               }
                
         var myViewModel = function(map) {
+            var self = this
             this.markers = ko.observableArray([]);
             console.log(this.markers().length);
-            this.markers.push(new createMarker("Boiling Crab","3377 Wilshire Blvd #115, Los Angeles, CA 90010",map)); 
-            console.log(this.markers().length);
-            console.log(this.markers()[0].marker.name);
-            console.log(this.markers()[0].marker.position.lng());
-            console.log(this.markers()[0].marker.position.lat());
-            console.log(this.markers()[0].marker.map);
+            console.log(startingMarkers);
+            
+            startingMarkers.forEach(function(x) {
+               self.markers.push(new createMarker(x.name,x.address,map));
+            });
+            
+            //for (var x in startingMarkers) {
+            //self.markers.push(new createMarker(startingMarkers[x]["name"],startingMarkers[x]["address"],map)); 
+            //};
+            console.log(this.markers.length);
         }
 
-           function initMap() {
+        function initMap() {
                 var map = new google.maps.Map(document.getElementById('map'), {
                   zoom: 13,
                   center: {lat: 34.0621759, lng: -118.2907225}
@@ -146,25 +172,5 @@
     </body>
 </html>
 
-            <!-- var startingMarkers = [{
-                    name: "MacArthur Park",
-                    address: "2230 W 6th St, Los Angeles, CA 90057",
-                    },
-                    {
-                    name: "Lafayette Park",
-                    address: "625 S La Fayette Park Pl, Los Angeles, CA 90057",
-                    },
-                    {
-                    name: "Seoul International Park",
-                    address: "3250 San Marino St, Los Angeles, CA 90006",
-                    },
-                    {
-                    name: "Shatto Recreation Center",
-                    address: "3191 W 4th St, Los Angeles, CA 90020",
-                    },
-                    {
-                    name: "Liberty Park",
-                    address: "3700 Wilshire Blvd, Los Angeles, CA 90010",
-                    }]; */
--->
+
             
