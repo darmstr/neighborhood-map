@@ -26,40 +26,55 @@
                 -moz-box-orient: horizontal;
                 -ms-box-orient: horizontal;
                 box-orient: horizontal;
-
             }
             header {
                 height:100px;
                 background: black;
                 margin: 0;
                 z-index: 999;
-            }
-            
+            }            
             #map {
                 -ms-flex: 1;
                 -webkit-box-flex: 1;
                 -moz-box-flex: 1;
                 -ms-box-flex: 1;
                  box-flex: 1; 
-            }
-            
+            }            
             #sidebar {
                 width: 200px;
                 -ms-flex: 0 200px;
                 -webkit-box-flex:  0;
                 -moz-box-flex:  0;
                 -ms-box-flex:  0;
-                box-flex:  0;  
+                box-flex:  0;
+                background-color: grey;
             }
+
+            #filter-span {
+                height: 25px;
+            }
+
+            .search-box {
+                width:70%
+            }
+
+            .filter-button {
+                width:25%
+            }
+
         </style>
         <script type='text/javascript' src='knockout-3.4.2.js'></script>
     </head>
     <body>
+
         <div class="container">
             <div id="sidebar">
-                <table data-bind="template: {name: 'sidebar-template', foreach: myViewModel.startingMarkers}">
-                </table>
-            
+            <div id="filter-span">
+                <span class="search-box"><input type="text" class="search-box"></input></span>
+                <span class="filter-button"><button class="filter-button">Filter</button></span>          
+            </div>
+                <table data-bind="template: {name: 'sidebar-template', foreach: startingMarkers}">
+                </table>            
             </div>
             <div id="map"></div>
         </div>
@@ -115,10 +130,7 @@
                         console.log("error")
                     }
                     });
-                  
-                } 
-                
-              
+                }   
             }
 
             function setMapOnAll(map) {
