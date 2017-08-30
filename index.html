@@ -64,13 +64,14 @@
 
         </style>
         <script type='text/javascript' src='knockout-3.4.2.js'></script>
+        <script type='text/javascript' src='jquery.js'></script>
     </head>
     <body>
 
         <div class="container">
             <div id="sidebar">
             <div id="filter-span">
-                <span class="search-box"><input type="text" class="search-box"></input></span>
+                <span class="search-box" data-bind="text-input: searchInput"><input type="text" class="search-box"></input></span>
                 <span class="filter-button"><button class="filter-button">Filter</button></span>          
             </div>
                 <table data-bind="template: {name: 'sidebar-template', foreach: startingMarkers}">
@@ -82,8 +83,8 @@
         <script type="text/html" id="sidebar-template">            
             <tr>
                 <td data-bind="text: name, attr: {id: name}"></td>
-                <td><button id="button">Remove</button></td>
-                <td><button id="addButton">Add</button></td>
+                <td><button class="button" id="asdfbutton">Remove</button></td>
+                <td><button class="addButton">Add</button></td>
             </tr>
         </script>
 
@@ -113,7 +114,7 @@
 
             function createMarker(name,address,map) {                   
                 var newMarker = this;
-                console.log(name);
+                //console.log(name);
                 var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
@@ -125,7 +126,7 @@
                                 map: map,
                                 position: results[0].geometry.location,
                         });
-                            console.log(newMarker.marker.name);
+                            //console.log(newMarker.marker.name + " create marker function");
                       } else {
                         console.log("error")
                     }
@@ -134,8 +135,8 @@
             }
 
             function setMapOnAll(map) {
-                for (var i = 0; i < markers.length; i++) {
-                  markers[i].setMap(map);
+                for (var i = 0; i < Markers.length; i++) {
+                  Markers[i].setMap(map);
                 }
               }
                 
@@ -152,17 +153,30 @@
               function bringBackMarkers() {
                 setMapOnAll(map);
               }
+
+              
+            function elementsFunction() {
+                var buttons = $("#asdfbutton");
+                console.log(buttons);
+
+                //for (var x of buttons) {
+                    //console.log(x.className);
+                //} 
+            }    
+
+            elementsFunction();   
+
+
                
         var myViewModel = function(map) {
-            viewModel = this
-            this.markers = ko.observableArray([]);
+            var viewModel = this
+            viewModel.searchInput = ko.observable("");
+            viewModel.Markers = ko.observableArray([]);
             startingMarkers.forEach(function(x) {
-               viewModel.markers.push(new createMarker(x.name,x.address,map));
-                console.log(viewModel.markers().length);
-                
+               viewModel.Markers.push(new createMarker(x.name,x.address,map));                
             });
-            viewModel.markers().forEach(function(x){
-                console.log(x);
+            viewModel.Markers().forEach(function(x){
+                //console.log(x);
             });
         }
 
