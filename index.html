@@ -71,9 +71,9 @@
         <div class="container">
             <div id="sidebar">
             <div id="filter-span">
-                <span class="search-box" data-bind="text-input: searchInput"><input type="text" class="search-box" placeholder="Type something"></input></span>   
+                <span class="search-box" ><input type="text" class="search-box" data-bind="value: searchInput" placeholder="Type something"></input></span>   
             </div>
-                <table data-bind="template: {name: 'sidebar-template', foreach: computedList}">
+                <table data-bind="template: {name: 'sidebar-template', foreach: markerList}">
                 </table>            
             </div>
             <div id="map"></div>
@@ -118,8 +118,7 @@
                 });
 
 
-                viewModel.computedList = ko.computed(function(){
-                    console.log(viewModel.searchInput());
+                viewModel.markerList = ko.computed(function(){
                     var tempList = [];
                     var listLen = viewModel.Markers().length;                
                     for (var i = 0; i < listLen; i++){
@@ -157,10 +156,10 @@
                 newMarker.showMarker = function(mapOrNull) {
                      if (mapOrNull === map) {
                         if (newMarker.map === null) {
-                            newMarker.setMap(mapOrNull);
+                            newMarker.marker.setMap(mapOrNull);
                         }
                     } else {
-                        newMarker.setMap(null);
+                        newMarker.marker.setMap(null);
                     }
                 };
 
