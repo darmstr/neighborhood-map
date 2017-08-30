@@ -55,7 +55,7 @@
             }
 
             .search-box {
-                width:70%
+                width:95%
             }
 
             .filter-button {
@@ -71,10 +71,9 @@
         <div class="container">
             <div id="sidebar">
             <div id="filter-span">
-                <span class="search-box" data-bind="text-input: searchInput"><input type="text" class="search-box"></input></span>
-                <span class="filter-button"><button class="filter-button">Filter</button></span>          
+                <span class="search-box" data-bind="text-input: searchInput"><input type="text" class="search-box" placeholder="Type something"></input></span>   
             </div>
-                <table data-bind="template: {name: 'sidebar-template', foreach: startingMarkers}">
+                <table data-bind="template: {name: 'sidebar-template', foreach: computedList}">
                 </table>            
             </div>
             <div id="map"></div>
@@ -83,8 +82,6 @@
         <script type="text/html" id="sidebar-template">            
             <tr>
                 <td data-bind="text: name, attr: {id: name}"></td>
-                <td><button class="button" id="asdfbutton">Remove</button></td>
-                <td><button class="addButton">Add</button></td>
             </tr>
         </script>
 
@@ -112,73 +109,63 @@
                     address: "3700 Wilshire Blvd, Los Angeles, CA 90010",
                     }]; 
 
-            function createMarker(name,address,map) {                   
+            var myViewModel = function(map) {
+                var viewModel = this
+                viewModel.searchInput = ko.observable("");
+                viewModel.Markers = ko.observableArray([]);
+                startingMarkers.forEach(function(x){
+                    viewModel.Markers.push( new Loc(x.name, x.address, map));
+                });
+
+
+                viewModel.computedList = ko.computed(function(){
+                    console.log(viewModel.searchInput());
+                    var tempList = [];
+                    var listLen = viewModel.Markers().length;                
+                    for (var i = 0; i < listLen; i++){
+                        if (viewModel.Markers()[i].name().toLowerCase().indexOf(viewModel.searchInput().toLowerCase()) != -1) {
+                            tempList.push(viewModel.Markers()[i]);
+                            viewModel.Markers()[i].showMarker(map);
+                        } else {
+                            viewModel.Markers()[i].showMarker(null);
+                        }
+                    }
+                    return tempList.sort(function(l, r){ return l.name() > r.name() ? 1 : -1;});
+                });
+            }
+
+            var Loc = function(name,address,map) {                   
                 var newMarker = this;
-                //console.log(name);
+                newMarker.name = ko.observable(name);
+
                 var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
                     var address = markerAddress;
                     geocoder.geocode({'address': address}, function(results, status) {
                         if (status === 'OK') { 
-                            newMarker.marker = new google.maps.Marker({
-                                name: name,      
+                            newMarker.marker = new google.maps.Marker({   
                                 map: map,
                                 position: results[0].geometry.location,
                         });
-                            //console.log(newMarker.marker.name + " create marker function");
                       } else {
                         console.log("error")
                     }
                     });
-                }   
-            }
-
-            function setMapOnAll(map) {
-                for (var i = 0; i < Markers.length; i++) {
-                  Markers[i].setMap(map);
                 }
-              }
-                
-            function setMapOnOne(marker,map) {
-                //for (var i = 0; i < markers.length; i++) {
-                  marker.setMap(map);
-               // }
-              }
-                
-              function clearMarkers() {
-                setMapOnAll(null);
-              }
-    
-              function bringBackMarkers() {
-                setMapOnAll(map);
-              }
 
-              
-            function elementsFunction() {
-                var buttons = $("#asdfbutton");
-                console.log(buttons);
-
-                //for (var x of buttons) {
-                    //console.log(x.className);
-                //} 
-            }    
-
-            elementsFunction();   
+                newMarker.showMarker = function(mapOrNull) {
+                     if (mapOrNull === map) {
+                        if (newMarker.map === null) {
+                            newMarker.setMap(mapOrNull);
+                        }
+                    } else {
+                        newMarker.setMap(null);
+                    }
+                };
 
 
-               
-        var myViewModel = function(map) {
-            var viewModel = this
-            viewModel.searchInput = ko.observable("");
-            viewModel.Markers = ko.observableArray([]);
-            startingMarkers.forEach(function(x) {
-               viewModel.Markers.push(new createMarker(x.name,x.address,map));                
-            });
-            viewModel.Markers().forEach(function(x){
-                //console.log(x);
-            });
-        }
+            }
 
         function initMap() {
                 var map = new google.maps.Map(document.getElementById('map'), {
