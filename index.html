@@ -20,7 +20,6 @@
                 display: -moz-box;
                 display: -ms-box;
                 display: box;
-
                 -ms-flex-direction: row;
                 -webkit-box-orient: horizontal;
                 -moz-box-orient: horizontal;
@@ -49,19 +48,15 @@
                 box-flex:  0;
                 background-color: grey;
             }
-
             #filter-span {
                 height: 25px;
             }
-
             .search-box {
                 width:95%
             }
-
             .filter-button {
                 width:25%
             }
-
         </style>
         <script type='text/javascript' src='knockout-3.4.2.js'></script>
         <script type='text/javascript' src='jquery.js'></script>
@@ -108,7 +103,6 @@
                     name: "Liberty Park",
                     address: "3700 Wilshire Blvd, Los Angeles, CA 90010",
                     }]; 
-
             var myViewModel = function(map) {
                 var viewModel = this
                 viewModel.searchInput = ko.observable("");
@@ -116,6 +110,7 @@
                 startingMarkers.forEach(function(x){
                     viewModel.Markers.push( new Loc(x.name, x.address, map));
                 });
+
 
 
                 viewModel.markerList = ko.computed(function(){
@@ -131,12 +126,12 @@
                     }
                     return tempList.sort(function(l, r){ return l.name() > r.name() ? 1 : -1;});
                 });
-            }
 
+
+            }
             var Loc = function(name,address,map) {                   
                 var newMarker = this;
                 newMarker.name = ko.observable(name);
-
                 var geocoder = new google.maps.Geocoder();
                     geocodeAddress(geocoder, map, address);
                     function geocodeAddress(geocoder, map, markerAddress) {
@@ -152,20 +147,17 @@
                     }
                     });
                 }
-
                 newMarker.showMarker = function(mapOrNull) {
                      if (mapOrNull === map) {
                         if (newMarker.map === null) {
+                            
                             newMarker.marker.setMap(mapOrNull);
                         }
                     } else {
                         newMarker.marker.setMap(null);
                     }
                 };
-
-
             }
-
         function initMap() {
                 var map = new google.maps.Map(document.getElementById('map'), {
                   zoom: 14,
@@ -175,7 +167,6 @@
         ko.applyBindings(new myViewModel(map));
             }
     
-
         </script>
         
         <script async defer
@@ -184,6 +175,3 @@
 
     </body>
 </html>
-
-
-            
